@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<edb4f0fe2e7583bae6d506d49e5a5e83>>
+ * @generated SignedSource<<0c190b0aeb5210a67b4b7d6872e835a8>>
  * @lightSyntaxTransform
  */
 
@@ -17,6 +17,7 @@ export type ProjectEvaluatorFilter = {
   value?: string | null;
 };
 export type TimeBinConfig = {
+  interval?: number;
   scale?: TimeBinScale;
   utcOffsetMinutes?: number;
 };
