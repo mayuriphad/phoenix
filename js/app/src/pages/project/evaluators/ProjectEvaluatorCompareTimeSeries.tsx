@@ -25,7 +25,7 @@ import {
 } from "@phoenix/components/chart/annotationMetricsUtils";
 import { getTimeBinRange } from "@phoenix/components/chart/timeBins";
 import { useTimeRange } from "@phoenix/components/datetime";
-import { useTimeBinScale } from "@phoenix/hooks/useTimeBin";
+import { useTimeBinSpec } from "@phoenix/hooks/useTimeBin";
 import { useTimeFormatters } from "@phoenix/hooks/useTimeFormatters";
 import { useUTCOffsetMinutes } from "@phoenix/hooks/useUTCOffsetMinutes";
 
@@ -36,6 +36,7 @@ import {
   getCompareLabelSegments,
   getCompareTimeSeriesView,
   getCompareTimeSeriesViews,
+  MAX_COMPARE_TIME_BINS,
 } from "./projectEvaluatorCompareTimeSeriesUtils";
 import {
   EVALUATOR_COMPARE_COLORS,
@@ -239,7 +240,10 @@ function ProjectEvaluatorCompareTimeSeriesChart({
   sides: [CompareSide, CompareSide];
 }) {
   const [sideA, sideB] = sides;
-  const scale = useTimeBinScale({ timeRange });
+  const { scale, interval } = useTimeBinSpec({
+    timeRange,
+    maxBins: MAX_COMPARE_TIME_BINS,
+  });
   const utcOffsetMinutes = useUTCOffsetMinutes();
   const { setCustomTimeRange } = useTimeRange();
   const timeTickFormatter = useBinTimeTickFormatter({ scale });
@@ -373,7 +377,7 @@ function ProjectEvaluatorCompareTimeSeriesChart({
         start: timeRange.start.toISOString(),
         end: timeRange.end.toISOString(),
       },
-      timeBinConfig: { scale, utcOffsetMinutes },
+      timeBinConfig: { scale, interval, utcOffsetMinutes },
       isSpan: evaluationTarget === "SPAN",
       isTrace: evaluationTarget === "TRACE",
       isSession: evaluationTarget === "SESSION",
@@ -451,6 +455,7 @@ function ProjectEvaluatorCompareTimeSeriesChart({
         <TimeRangeChartBrush
           onTimeRangeSelected={setCustomTimeRange}
           scale={scale}
+          interval={interval}
         >
           {({ chartProps }) => (
             <AnnotationMetricsGroupedChart
@@ -485,6 +490,7 @@ function ProjectEvaluatorCompareTimeSeriesChart({
                     getTimeBinRange({
                       binStartMs: x,
                       scale,
+                      interval,
                       utcOffsetMinutes,
                     })
                   )}
